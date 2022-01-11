@@ -73,6 +73,7 @@ __meta__ = {
 }
 
 [node name="ReferenceRect" type="ReferenceRect" parent="."]
+visible = false
 margin_top = 120.0
 margin_right = 1024.0
 margin_bottom = 600.0

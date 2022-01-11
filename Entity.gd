@@ -24,6 +24,8 @@ var time_to_suscecptible: int = -1
 var time_to_unvaccinated: int = -1
 var time_since_dead: int = -1
 
+onready var label = $Label
+
 func _ready():
 	position = Vector2(
 		rand_range(rect_to_move_in.position.x, rect_to_move_in.size.x), 
@@ -144,19 +146,19 @@ func set_state(value: int):
 func _state_changed():
 	var current_time = OS.get_unix_time()
 	remove_from_all_groups()
-	$Label.text = name + " "
+	label.text = name + " "
 	if is_infected():
 		modulate = Color.red
 		check_and_add_to_group("infected")
-		$Label.text += "Infected" #: %d %d" % [(current_time-time_since_caught_virus), time_since_caught_virus]
+		label.text += "Infected" #: %d %d" % [(current_time-time_since_caught_virus), time_since_caught_virus]
 	if is_recovered():
 		modulate = Color.green
 		check_and_add_to_group("recovered")
-		$Label.text += "Recovered" #: %d" % (current_time-time_since_recovered)
+		label.text += "Recovered" #: %d" % (current_time-time_since_recovered)
 	if is_susceptible():
 		modulate = Color.white
 		check_and_add_to_group("susceptible")
-		$Label.text += "Susceptible"
+		label.text += "Susceptible"
 	if is_dead():
 		check_and_add_to_group("dead")
 		hide()
@@ -166,13 +168,13 @@ func _state_changed():
 	if is_vaccinated():
 		check_and_add_to_group("vaccinated")
 		modulate = Color.blueviolet
-		$Label.text = "Vaccinated, Susceptible"
+		label.text = "Vaccinated, Susceptible"
 		if is_infected():
 			modulate = lerp(modulate, Color.red, 0.5)
-			$Label.text = "Vaccinated, Infected" #: %d %d" % [(current_time-time_since_caught_virus), time_since_caught_virus]
+			label.text = "Vaccinated, Infected" #: %d %d" % [(current_time-time_since_caught_virus), time_since_caught_virus]
 		if is_recovered():
 			modulate = lerp(modulate, Color.green, 0.5)
-			$Label.text = "Vaccinated, Recovered" #: %d" % (current_time-time_since_recovered)
+			label.text = "Vaccinated, Recovered" #: %d" % (current_time-time_since_recovered)
 	
 func is_on_edge(detection_area = 0.001):
 	var visible_rect = rect_to_move_in
@@ -270,3 +272,10 @@ func clear_all():
 func dec2bin(dec: int) -> int:
 	return int(log(dec)/log(2))
 
+
+func _on_Area2D_mouse_entered():
+	label.visible = true
+
+
+func _on_Area2D_mouse_exited():
+	label.visible = false

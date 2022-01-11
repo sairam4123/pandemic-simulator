@@ -1,0 +1,155 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=4
+
+_global_script_classes=[ {
+"base": "Control",
+"class": "Chart",
+"language": "GDScript",
+"path": "res://addons/easy_charts/utilities/classes/base/chart.gd"
+}, {
+"base": "Node2D",
+"class": "Chart2D",
+"language": "GDScript",
+"path": "res://addons/easy_charts/utilities/classes/base/chart2d.gd"
+}, {
+"base": "ScatterChartBase",
+"class": "ColumnChart",
+"language": "GDScript",
+"path": "res://addons/easy_charts/control_charts/ColumnChart/column_chart.gd"
+}, {
+"base": "Chart2D",
+"class": "ColumnChart2D",
+"language": "GDScript",
+"path": "res://addons/easy_charts/2d_charts/ColumnChart2D/column_chart2D.gd"
+}, {
+"base": "Resource",
+"class": "DataFrame",
+"language": "GDScript",
+"path": "res://addons/easy_charts/utilities/classes/structures/data_frame.gd"
+}, {
+"base": "PanelContainer",
+"class": "DataTooltip",
+"language": "GDScript",
+"path": "res://addons/easy_charts/utilities/containers/data_tooltip/data_tooltip.gd"
+}, {
+"base": "MarginContainer",
+"class": "LegendElement",
+"language": "GDScript",
+"path": "res://addons/easy_charts/utilities/containers/legend/function_legend.gd"
+}, {
+"base": "ScatterChartBase",
+"class": "LineChart",
+"language": "GDScript",
+"path": "res://addons/easy_charts/control_charts/LineChart/line_chart.gd"
+}, {
+"base": "Chart2D",
+"class": "LineChart2D",
+"language": "GDScript",
+"path": "res://addons/easy_charts/2d_charts/LineChart2D/line_chart2D.gd"
+}, {
+"base": "Resource",
+"class": "Matrix",
+"language": "GDScript",
+"path": "res://addons/easy_charts/utilities/classes/structures/matrix.gd"
+}, {
+"base": "Reference",
+"class": "MatrixGenerator",
+"language": "GDScript",
+"path": "res://addons/easy_charts/utilities/classes/structures/matrix_generator.gd"
+}, {
+"base": "Chart",
+"class": "PieChart",
+"language": "GDScript",
+"path": "res://addons/easy_charts/control_charts/PieChart/pie_chart.gd"
+}, {
+"base": "Control",
+"class": "Point",
+"language": "GDScript",
+"path": "res://addons/easy_charts/utilities/components/point/point.gd"
+}, {
+"base": "ScatterChartBase",
+"class": "RadarChart",
+"language": "GDScript",
+"path": "res://addons/easy_charts/control_charts/RadarChart/radar_chart.gd"
+}, {
+"base": "ScatterChartBase",
+"class": "ScatterChart",
+"language": "GDScript",
+"path": "res://addons/easy_charts/control_charts/ScatterChart/scatter_chart.gd"
+}, {
+"base": "Chart2D",
+"class": "ScatterChart2D",
+"language": "GDScript",
+"path": "res://addons/easy_charts/2d_charts/ScatterChart2D/scatter_chart2D.gd"
+}, {
+"base": "Spatial",
+"class": "ScatterChart3D",
+"language": "GDScript",
+"path": "res://addons/easy_charts/3d_charts/ScatterChart3D/scatter_chart3D.gd"
+}, {
+"base": "Chart",
+"class": "ScatterChartBase",
+"language": "GDScript",
+"path": "res://addons/easy_charts/utilities/classes/base/scatter_chart_base.gd"
+}, {
+"base": "Reference",
+"class": "Slice",
+"language": "GDScript",
+"path": "res://addons/easy_charts/utilities/components/slice/slice.gd"
+}, {
+"base": "Resource",
+"class": "VirusResource",
+"language": "GDScript",
+"path": "res://VirusResource.gd"
+} ]
+_global_script_class_icons={
+"Chart": "",
+"Chart2D": "",
+"ColumnChart": "",
+"ColumnChart2D": "",
+"DataFrame": "",
+"DataTooltip": "",
+"LegendElement": "",
+"LineChart": "",
+"LineChart2D": "",
+"Matrix": "",
+"MatrixGenerator": "",
+"PieChart": "",
+"Point": "",
+"RadarChart": "",
+"ScatterChart": "",
+"ScatterChart2D": "",
+"ScatterChart3D": "",
+"ScatterChartBase": "",
+"Slice": "",
+"VirusResource": ""
+}
+
+[application]
+
+config/name="TestVirusSimulator"
+run/main_scene="res://Main.tscn"
+config/icon="res://icon.png"
+
+[autoload]
+
+ECUtilities="*res://addons/easy_charts/utilities/scripts/ec_utilities.gd"
+
+[editor_plugins]
+
+enabled=PoolStringArray( "res://addons/easy_charts/plugin.cfg" )
+
+[physics]
+
+common/enable_pause_aware_picking=true
+
+[rendering]
+
+environment/default_environment="res://default_env.tres"

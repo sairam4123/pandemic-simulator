@@ -1,0 +1,11 @@
+[gd_resource type="Resource" load_steps=2 format=2]
+
+[ext_resource path="res://VirusResource.gd" type="Script" id=1]
+
+[resource]
+script = ExtResource( 1 )
+virus_name = "TestVirus"
+infection_rate = 10
+recovery_time = 16
+infection_time = 18
+death_rate = 10000

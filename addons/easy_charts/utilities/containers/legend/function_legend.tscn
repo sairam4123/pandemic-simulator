@@ -1,0 +1,43 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://addons/easy_charts/utilities/containers/legend/function_legend.gd" type="Script" id=1]
+
+[node name="MarginContainer" type="MarginContainer"]
+margin_right = 80.0
+margin_bottom = 35.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_constants/margin_right = 10
+custom_constants/margin_top = 10
+custom_constants/margin_left = 10
+custom_constants/margin_bottom = 10
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="FunctionLegend" type="HBoxContainer" parent="."]
+margin_left = 10.0
+margin_top = 10.0
+margin_right = 70.0
+margin_bottom = 25.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Color" type="ColorRect" parent="FunctionLegend"]
+margin_right = 15.0
+margin_bottom = 15.0
+rect_min_size = Vector2( 15, 15 )
+size_flags_horizontal = 0
+size_flags_vertical = 4
+color = Color( 0, 0, 0, 1 )
+
+[node name="Function" type="Label" parent="FunctionLegend"]
+margin_left = 19.0
+margin_right = 46.0
+margin_bottom = 14.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Test"
+align = 1
+valign = 1

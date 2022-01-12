@@ -1,10 +1,11 @@
-[gd_scene load_steps=11 format=2]
+[gd_scene load_steps=12 format=2]
 
 [ext_resource path="res://EntitySpawner.tscn" type="PackedScene" id=1]
 [ext_resource path="res://Entity.tscn" type="PackedScene" id=2]
 [ext_resource path="res://Main.gd" type="Script" id=3]
 [ext_resource path="res://addons/easy_charts/control_charts/LineChart/line_chart.tscn" type="PackedScene" id=4]
 [ext_resource path="res://WaveManager.gd" type="Script" id=5]
+[ext_resource path="res://LabelSlider.gd" type="Script" id=6]
 
 [sub_resource type="StyleBoxFlat" id=4]
 bg_color = Color( 0.552941, 0.552941, 0.552941, 1 )
@@ -108,4 +109,53 @@ Chart_Modifiers/only_disp_values = Vector2( 50, 0 )
 [node name="WaveManager" type="Node2D" parent="."]
 script = ExtResource( 5 )
 
+[node name="VaccinationRate" type="HBoxContainer" parent="."]
+margin_left = 609.0
+margin_top = 13.0
+margin_right = 1002.0
+margin_bottom = 53.0
+script = ExtResource( 6 )
+__meta__ = {
+"_edit_group_": true,
+"_edit_use_anchors_": false
+}
+slider_value = 100.0
+value_format = "%07.2f %%"
+
+[node name="Name" type="Label" parent="VaccinationRate"]
+margin_top = 13.0
+margin_right = 109.0
+margin_bottom = 27.0
+text = "Vaccination Rate:"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Slider" type="HSlider" parent="VaccinationRate"]
+margin_left = 113.0
+margin_top = 12.0
+margin_right = 349.0
+margin_bottom = 28.0
+size_flags_horizontal = 3
+size_flags_vertical = 4
+min_value = 0.01
+step = 0.01
+value = 0.01
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Value" type="Label" parent="VaccinationRate"]
+margin_left = 353.0
+margin_top = 13.0
+margin_right = 393.0
+margin_bottom = 27.0
+text = "100 %"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
 [connection signal="wave_state_changed" from="WaveManager" to="." method="_on_WaveManager_wave_state_changed"]
+[connection signal="value_changed" from="VaccinationRate/Slider" to="VaccinationRate" method="_on_Slider_value_changed"]

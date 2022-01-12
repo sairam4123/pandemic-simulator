@@ -8,4 +8,4 @@ virus_name = "TestVirus"
 infection_rate = 10
 recovery_time = 16
 infection_time = 18
-death_rate = 10000
+death_rate = 100

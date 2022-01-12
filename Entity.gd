@@ -24,6 +24,9 @@ var time_to_suscecptible: int = -1
 var time_to_unvaccinated: int = -1
 var time_since_dead: int = -1
 
+var infected_virus: VirusResource
+var vaccine: VaccineResource
+
 onready var label = $Label
 
 func _ready():
@@ -50,19 +53,12 @@ func _process(delta):
 	if wave_state and visible:
 		for body in $Area2D.get_overlapping_bodies():
 			body = body.get_parent()
-			if is_infected() and randi() % get_infection_rate(body) == 1 and body.is_susceptible():
-				body.infect()
+			if is_infected() and int(fmod(randi(), get_infection_rate())) == 1 and body.is_susceptible(): # randi() % get_death_rate() == 1
+				body.infect(infected_virus)
 				if debug:
-					prints(body.name, "has been infected by", name)
-					
-	if vaccination_started and visible:
-		if randi() % get_vaccination_rate() == 1 and not (is_vaccinated() and is_dead()):
-			set_vaccinated(true)
-			if debug:
-				prints(name, "has been vaccinated.")
-			time_to_unvaccinated = current_time + get_vaccinated_period() + int(rand_range(-5, 5))
+					prints(body.name, "has been infected by", name, ".")
 			
-	if is_infected() and randi() % get_dead_rate() == 1:
+	if is_infected() and int(fmod(randi(), get_death_rate())) == 1: # = randi() % get_death_rate() == 1
 		clear_all()
 		set_dead(true)
 		time_to_recover = -1
@@ -75,68 +71,76 @@ func _process(delta):
 		time_to_recover = current_time + get_infection_time() + int(rand_range(-5, 5))
 	
 	if time_to_recover != -1 and is_infected():
-		if abs(time_to_recover - current_time) <= 0 and randi() % get_recovery_rate() == 1:
+		if abs(time_to_recover - current_time) <= 0:
 			set_recovered(true)
 			set_infected(false)
 			time_to_recover = -1
 			time_to_suscecptible = current_time + get_recovery_time() + int(rand_range(-5, 5))
 			if debug:
-				prints(name, "is recovering!")
+				prints(name, "is recovering.")
 	
 	if time_to_suscecptible != -1 and is_recovered():
 		if (abs(time_to_suscecptible - current_time) <= 0):
 			set_susceptible(true)
 			set_recovered(false)
 			if debug:
-				prints(name, "is now susceptible!")
+				prints(name, "is now susceptible.")
 			time_to_suscecptible = -1
 	
 	if time_to_unvaccinated != -1 and is_vaccinated():
 		if abs(time_to_unvaccinated - current_time) <= 0:
 			set_vaccinated(false)
 			if debug:
-				prints(name, "is no longer immune!")
+				prints(name, "is no longer immune.")
 			time_to_unvaccinated = -1
 	
-	if randi() % get_dead_rate() == 1 and is_dead() and abs(current_time-time_since_dead) < get_dead_period():
+	if randi() % get_birth_rate() == 1 and is_dead() and abs(current_time-time_since_dead) < get_max_death_period():
 		clear_all()
 		set_susceptible(true)
 		time_since_dead = -1
 		if debug:
-			prints(name, "is back alive!")
+			prints(name, "is back alive.")
 #	_state_changed()
 
 # Don't randomize the output (it's being randomized).
 func get_infection_time(body = self):
-	return 18 if !body.is_vaccinated() else 12
+	var time = body.infected_virus.infection_time
+	if body.is_vaccinated():
+		time *= body.vaccine.infection_time_multiplier
+	return time
 
 func get_recovery_time(body = self):
-	return 16 if !body.is_vaccinated() else 10
+	var time = body.infected_virus.infection_time
+	if body.is_vaccinated():
+		time *= body.vaccine.recovery_time_multiplier
+	return time
 
 func get_vaccinated_period():
 	return 300
 
-func get_dead_period():
+func get_max_death_period():
 	return 200
 
 func get_infection_rate(body = self):
-	return 10 if !body.is_vaccinated() else 100
+	var rate = infected_virus.infection_rate
+	if body.is_vaccinated():
+		rate /= body.vaccine.infection_rate_multiplier
+	return rate
 
 func get_birth_rate():
 	return 1000
 
-func get_recovery_rate(body = self):
-	return 100 if !body.is_vaccinated() else 10
+func get_death_rate(body = self):
+	var rate = body.infected_virus.death_rate
+	if body.is_vaccinated():
+		rate /= body.vaccine.death_rate_multiplier
+	return rate
 
-func get_dead_rate(body = self):
-	return 10000 if !body.is_vaccinated() else 1000000
-
-func get_vaccination_rate():
-	return 100
-
-func infect(current_time: int = OS.get_unix_time()):
+func infect(virus: VirusResource):
+	var current_time = OS.get_unix_time()
 	set_susceptible(false)
 	set_infected(true)
+	infected_virus = virus
 	time_to_recover = current_time + get_infection_time() + int(rand_range(-5, 5))
 
 func set_state(value: int):
@@ -190,13 +194,13 @@ func is_on_edge(detection_area = 0.001):
 
 func get_edge_normal(detection_area = 0.001):
 	var visible_rect = rect_to_move_in
-	if position.x < int(float(visible_rect.size.x)*detection_area):
+	if position.x < int(visible_rect.position.x+float(visible_rect.size.x)*detection_area):
 		prints(name, "left")
 		return Vector2.LEFT
 	if position.x > visible_rect.size.x-(visible_rect.size.x*detection_area):
 		prints(name, "right")
 		return Vector2.RIGHT
-	if position.y < int(float(visible_rect.size.y)*detection_area):
+	if position.y < int(visible_rect.position.y+float(visible_rect.size.y)*detection_area):
 		print(name, "down")
 		return Vector2.DOWN
 	if position.y > visible_rect.size.y-(visible_rect.size.y*detection_area):
@@ -212,7 +216,7 @@ func pick_rand_point_in_circle(x, y, r, subdiv):
 
 
 func _on_Area2D_body_entered(body):
-	if body.get_parent() != self and body.visible:
+	if body.get_parent() != self and !body.get_parent().is_dead():
 		var angle = 180 - direction.angle()
 		direction = Vector2(cos(-angle), sin(-angle))
 
@@ -227,6 +231,14 @@ func check_and_add_to_group(group, persistent = true):
 #		prints(name, "adding to group", group)
 		add_to_group(group, persistent)
 #		prints(name, is_in_group(group))
+
+func vaccinate(p_vaccine):
+	var current_time = OS.get_unix_time()
+	set_vaccinated(true)
+	if debug:
+		prints(name, "has been vaccinated.")
+	vaccine = p_vaccine
+	time_to_unvaccinated = current_time + get_vaccinated_period() + int(rand_range(-5, 5))
 
 func remove_from_all_groups():
 	check_and_remove_from_group("susceptible")
@@ -252,30 +264,31 @@ func is_dead():
 	return (state & States.DEAD) == States.DEAD
 
 func set_vaccinated(value: bool):
-	self.state = state & ~(1 << dec2bin(States.VACCINATED)) | (int(value) << dec2bin(States.VACCINATED))
+	self.state = (state & ~(1 << dec2bin(States.VACCINATED))) | (int(value) << dec2bin(States.VACCINATED))
 
 func set_infected(value: bool):
-	self.state = state & ~(1 << dec2bin(States.INFECTED)) | (int(value) << dec2bin(States.INFECTED))
+	self.state = (state & ~(1 << dec2bin(States.INFECTED))) | (int(value) << dec2bin(States.INFECTED))
 
 func set_susceptible(value: bool):
-	self.state = state & ~(1 << dec2bin(States.SUSCEPTIBLE)) | (int(value) << dec2bin(States.SUSCEPTIBLE))
+	self.state = (state & ~(1 << dec2bin(States.SUSCEPTIBLE))) | (int(value) << dec2bin(States.SUSCEPTIBLE))
 
 func set_recovered(value: bool):
-	self.state = state & ~(1 << dec2bin(States.RECOVERED)) | (int(value) << dec2bin(States.RECOVERED))
+	self.state = (state & ~(1 << dec2bin(States.RECOVERED))) | (int(value) << dec2bin(States.RECOVERED))
 
 func set_dead(value: bool):
-	self.state = state & ~(1 << dec2bin(States.DEAD)) | (int(value) << dec2bin(States.DEAD))
+	self.state = (state & ~(1 << dec2bin(States.DEAD))) | (int(value) << dec2bin(States.DEAD))
 
 func clear_all():
 	state = 0
 
-func dec2bin(dec: int) -> int:
+func dec2bin(dec: int) -> int: # Positions
 	return int(log(dec)/log(2))
 
+func bin2dec(bin_pos: int) -> int:
+	return 1 << bin_pos
 
 func _on_Area2D_mouse_entered():
 	label.visible = true
-
 
 func _on_Area2D_mouse_exited():
 	label.visible = false

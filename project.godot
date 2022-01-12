@@ -105,6 +105,11 @@ _global_script_classes=[ {
 "path": "res://addons/easy_charts/utilities/components/slice/slice.gd"
 }, {
 "base": "Resource",
+"class": "VaccineResource",
+"language": "GDScript",
+"path": "res://VaccineResource.gd"
+}, {
+"base": "Resource",
 "class": "VirusResource",
 "language": "GDScript",
 "path": "res://VirusResource.gd"
@@ -129,6 +134,7 @@ _global_script_class_icons={
 "ScatterChart3D": "",
 "ScatterChartBase": "",
 "Slice": "",
+"VaccineResource": "",
 "VirusResource": ""
 }
 

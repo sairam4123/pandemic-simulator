@@ -8,6 +8,7 @@ var day = 0
 var debug = false setget set_debug
 
 var current_virus: VirusResource
+var current_vaccine: VaccineResource
 
 func _input(event):
 	if event is InputEventKey:
@@ -29,6 +30,8 @@ func _input(event):
 
 func _ready():
 	randomize()
+	current_virus = load("res://viruses/TestVirus.tres")
+	current_vaccine = load("res://vaccines/TestVaccine.tres")
 	dataframe = DataFrame.new(Matrix.new(), ['Susceptible', 'Infected', 'Recovered', 'Dead', 'Vaccinated'])
 	$LineChart.plot_from_dataframe(dataframe)
 	for legend in $LineChart.get_legend():
@@ -62,12 +65,21 @@ func _process(delta):
 			$Label.text += "Time elasped from current wave: %s\n" % format_time(next_wave_relative_time)
 	
 	manage_waves(infected_count)
+	manage_vaccination()
 	
 	day += 1
 	
 	dataframe.insert_row([susceptible_count, infected_count, recovered_count, dead_count, vaccinated_count], str(day))
 	$LineChart.update_functions(str(day), [susceptible_count, infected_count, recovered_count, dead_count, vaccinated_count])
 
+func manage_vaccination():
+	if vaccination_started:
+		for i in range(5):
+			var random_child = $Entities.get_child(randi() % $Entities.get_child_count())
+			if fmod(randi(), 100.0/get_vaccination_rate()) < 0.25 and not (random_child.is_vaccinated() and random_child.is_dead()):
+				random_child.vaccinate(current_vaccine)
+func get_vaccination_rate():
+	return $VaccinationRate.slider_value
 
 func manage_waves(infected_count):
 	var next_wave_relative_time = $WaveManager.get_relative_time_between_waves()	
@@ -79,7 +91,7 @@ func manage_waves(infected_count):
 					continue
 				else:
 					$WaveManager.start_wave()
-					random_child.infect()
+					random_child.infect(current_virus)
 					if debug:
 						print("Wave started!")
 						prints(random_child.name, "has been infected artificially!")

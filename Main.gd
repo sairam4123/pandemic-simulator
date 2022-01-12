@@ -7,6 +7,8 @@ var dataframe: DataFrame
 var day = 0
 var debug = false setget set_debug
 
+var current_virus: VirusResource
+
 func _input(event):
 	if event is InputEventKey:
 		if event.scancode == KEY_SPACE and event.pressed and debug:
@@ -26,7 +28,7 @@ func _input(event):
 		
 
 func _ready():
-	seed(100)
+	randomize()
 	dataframe = DataFrame.new(Matrix.new(), ['Susceptible', 'Infected', 'Recovered', 'Dead', 'Vaccinated'])
 	$LineChart.plot_from_dataframe(dataframe)
 	for legend in $LineChart.get_legend():
@@ -50,14 +52,14 @@ func _process(delta):
 	$Label.text += "Vaccinated People: %d\n" % vaccinated_count
 	$Label.text += "Vaccination Campaign: %s\n" % vaccination_started
 	var next_wave_relative_time = $WaveManager.get_relative_time_between_waves()
-	if next_wave_relative_time != -1:
+	if next_wave_relative_time != -int(INF):
 		if !$WaveManager.is_wave_started():
 			if next_wave_relative_time > 0:
-				$Label.text += "Next wave starts in: %d\n" % next_wave_relative_time
+				$Label.text += "Next wave starts in: %s\n" % format_time(next_wave_relative_time)
 			elif next_wave_relative_time <= 0:
 				$Label.text += "Next wave is starting in few seconds.\n"
 		if $WaveManager.is_wave_started():
-			$Label.text += "Time elasped from current wave: %d\n" % next_wave_relative_time
+			$Label.text += "Time elasped from current wave: %s\n" % format_time(next_wave_relative_time)
 	
 	manage_waves(infected_count)
 	
@@ -100,3 +102,10 @@ func set_debug(value):
 func _on_WaveManager_wave_state_changed(state):
 	for entity in $Entities.get_children():
 		entity.wave_state = state
+
+func format_time(total_secs):
+	var sec = fmod(total_secs, 60.0)
+	var mins = fmod(total_secs/60, 60.0)
+	var hours = fmod(total_secs/3600, 24.0)
+	
+	return str("%02d:%02d:%02d" % [hours, mins, sec])

@@ -44,9 +44,9 @@ func is_wave_started() -> bool:
 
 func get_relative_time_between_waves() -> int:
 	var current_time = OS.get_unix_time()
-	if is_wave_started() and time_to_start_wave != -1:
-		return int(abs(time_to_start_wave-current_time))
-	elif !is_wave_started() and time_since_wave_started != -1:
+	if !is_wave_started() and time_to_start_wave != -1:
+		return int((time_to_start_wave-current_time))
+	elif is_wave_started() and time_since_wave_started != -1:
 		return int(abs(current_time-time_since_wave_started))
-	return -1
+	return -int(INF)
 

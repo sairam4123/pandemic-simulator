@@ -103,10 +103,6 @@ In these cases they are known as run charts."
 }
 chart_name = "Pandemic Graph"
 Chart_Style/function_colors = PoolColorArray( 0, 1, 1, 1, 1, 0, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0.478431, 0, 1, 1 )
-Chart_Style/box_color = Color( 0.117647, 0.117647, 0.117647, 1 )
-Chart_Style/v_lines_color = Color( 0.792157, 0.792157, 0.792157, 1 )
-Chart_Style/h_lines_color = Color( 0.792157, 0.792157, 0.792157, 1 )
-Chart_Style/font_color = Color( 0.117647, 0.117647, 0.117647, 1 )
 Chart_Modifiers/only_disp_values = Vector2( 50, 0 )
 
 [node name="WaveManager" type="Node2D" parent="."]
